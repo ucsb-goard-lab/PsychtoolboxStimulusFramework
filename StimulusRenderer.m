@@ -39,8 +39,13 @@ classdef StimulusRenderer < handle
             [screenXpixels, screenYpixels] = Screen('WindowSize', obj.window);
             obj.rect = [0 0 screenXpixels screenYpixels];
             
+            disp('Measuring ifi...')
             % Retrieve video redraw interval for later control of our animation timing:
-            obj.ifi = Screen('GetFlipInterval', obj.window);
+            obj.ifi = Screen('GetFlipInterval', obj.window, 100);
+            
+            topPriorityLevel = MaxPriority(obj.window);
+            Priority(topPriorityLevel);
+
             
             % These two from the DrawBLank function, but i assume we need it here..
             % Make sure this is running on OpenGL Psychtoolbox:
@@ -62,6 +67,7 @@ classdef StimulusRenderer < handle
         
         function cleanUp(obj)
             % Simple function just for cleaning up after we're done
+            Priority(0);
             sca;
             close all;
         end
@@ -85,29 +91,50 @@ classdef StimulusRenderer < handle
             while obj.getTime() < t_close
                 
                 Screen('FillRect', obj.window, obj.background*255, obj.rect);
-                
+                Screen('DrawingFinished', obj.window);
+
                 % Show it at next retrace:
                 vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
             end
             return
         end
         
-        function drawMovie(obj, t_close, movie)
+        function drawMovie(obj, t_close, movie, framerate)
+            if nargin < 4 || isempty(framerate)
+                framerate = 30; %Hz
+            end
+            waitframes = (1/obj.ifi) / framerate;
+            
             vbl =  Screen('Flip', obj.window);
             frame_idx = 1;
             while obj.getTime() < t_close
+                disp(frame_idx)
                 [imageTexture] = Screen('MakeTexture', obj.window, movie(:, :, frame_idx)); % probably should add some checks here to make sure it works properly...
                 Screen('DrawTexture', obj.window, imageTexture, [], obj.rect);
-                vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
-                frame_idx = frame_idx + 1;
+                Screen('DrawingFinished', obj.window);
+                vbl = Screen('Flip', obj.window, vbl + (waitframes) * obj.ifi);
+                frame_idx = mod(frame_idx, size(movie, 3)) + 1;
             end
         end
         
-        function drawImage(obj, t_close, img)
+        function drawImage(obj, t_close, img, stretch_flag)
+            if nargin < 4 || isempty(stretch_flag)
+                stretch_flag = 0;
+            end
+            if ~stretch_flag
+                ratio = size(img, 2) / size(img, 1);
+                short_side = min([obj.rect(3), obj.rect(4)]);
+                long_side = round(ratio * short_side);
+                dest_rect = [obj.rect(1) + long_side/2, obj.rect(2), obj.rect(3) - long_side/2, obj.rect(4)]; 
+            else
+                dest_rect = obj.rect;
+            end
+            
             vbl = Screen('Flip', obj.window);
             while obj.getTime() < t_close
                 [imageTexture] = Screen('MakeTexture', obj.window, img); % probably should add some checks here to make sure it works properly...
-                Screen('DrawTexture', obj.window, imageTexture, [], obj.rect);
+                Screen('DrawTexture', obj.window, imageTexture, [], dest_rect);
+                Screen('DrawingFinished', obj.window);
                 vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
             end
             
@@ -168,7 +195,7 @@ classdef StimulusRenderer < handle
                 % Draw the grating:
                 Screen('DrawTexture',obj.window, gratingtex, obj.rect, obj.rect, ori, ...
                     [], [], [], [], rotateMode, [phase, spat_freq, amplitude, 0]);
-                
+                Screen('DrawingFinished', obj.window);
                 % Show it at next retrace:
                 vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
             end

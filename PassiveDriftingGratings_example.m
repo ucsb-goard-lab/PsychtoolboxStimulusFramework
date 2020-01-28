@@ -1,6 +1,6 @@
 %PassiveDriftingGratings_new
 
-oriList =[0:30:330];%[0:30:330];                                   % Orientation list, Default = [0:30:330]
+oriList = [0:30:330];%[0:30:330];                                   % Orientation list, Default = [0:30:330]
 repeats = 8;                                            % Number of repeats, Default = 8
 spatFreqList = 0.004 * ones(1,length(oriList));         % Spatial Freq, Default = 0.004
 tempFreqList = 2 * ones(1,length(oriList));             % Temporal freq, Default = 2
