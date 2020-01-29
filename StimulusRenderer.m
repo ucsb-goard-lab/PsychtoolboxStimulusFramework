@@ -122,10 +122,10 @@ classdef StimulusRenderer < handle
                 stretch_flag = 0;
             end
             if ~stretch_flag
-                ratio = size(img, 2) / size(img, 1);
+                ratio = size(img, 1) / size(img, 2);
                 short_side = min([obj.rect(3), obj.rect(4)]);
                 long_side = round(ratio * short_side);
-                dest_rect = [obj.rect(1) + long_side, obj.rect(2), obj.rect(3) - long_side, obj.rect(4)]; 
+                dest_rect = [obj.rect(1) + long_side/2, obj.rect(2), obj.rect(3) - long_side/2, obj.rect(4)]; 
             else
                 dest_rect = obj.rect;
             end
