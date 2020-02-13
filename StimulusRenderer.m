@@ -108,8 +108,6 @@ classdef StimulusRenderer < handle
             end
             waitframes = (1/obj.ifi) / framerate;
             
-            img = obj.imgChecker(img);
-
             vbl =  Screen('Flip', obj.window);
             frame_idx = 1;
             while obj.getTime() < t_close
