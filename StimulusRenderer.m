@@ -117,8 +117,8 @@ classdef StimulusRenderer < handle
                 Screen('DrawingFinished', obj.window);
                 vbl = Screen('Flip', obj.window, vbl + (waitframes) * obj.ifi);
                 frame_idx = mod(frame_idx, size(movie, 3)) + 1;
-                Screen('Close', imageTexture);
             end
+            Screen('Close', imageTexture);
         end
         
         function drawImage(obj, t_close, img, stretch_flag)
@@ -144,9 +144,8 @@ classdef StimulusRenderer < handle
                 Screen('DrawTexture', obj.window, imageTexture, [], dest_rect);
                 Screen('DrawingFinished', obj.window);
                 vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
-                Screen('Close', imageTexture);
             end
-            
+            Screen('Close', imageTexture);
         end
         
         function drawDriftingGrating(obj, t_close, ori, spat_freq, temp_freq, contrast, phase, patch_size)
