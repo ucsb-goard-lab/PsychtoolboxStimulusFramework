@@ -39,10 +39,13 @@ classdef StimulusRenderer < handle
             [screenXpixels, screenYpixels] = Screen('WindowSize', obj.window);
             obj.rect = [0 0 screenXpixels screenYpixels];
             
-            disp('Measuring ifi...')
+            disp('Measuring ifi, please wait...')
             % Retrieve video redraw interval for later control of our animation timing:
-            obj.ifi = Screen('GetFlipInterval', obj.window, 100);
-            
+            try
+                obj.ifi = Screen('GetFlipInterval', obj.window, 100);
+            catch
+                disp('This was likely due to a failure to measure the ifi... run it again, and don''t touch anything')
+            end
             topPriorityLevel = MaxPriority(obj.window);
             Priority(topPriorityLevel);
 
@@ -89,7 +92,7 @@ classdef StimulusRenderer < handle
             vbl = Screen('Flip', obj.window);
             
             while obj.getTime() < t_close
-                
+
                 Screen('FillRect', obj.window, obj.background*255, obj.rect);
                 Screen('DrawingFinished', obj.window);
 
@@ -114,6 +117,7 @@ classdef StimulusRenderer < handle
                 Screen('DrawingFinished', obj.window);
                 vbl = Screen('Flip', obj.window, vbl + (waitframes) * obj.ifi);
                 frame_idx = mod(frame_idx, size(movie, 3)) + 1;
+                Screen('Close', imageTexture);
             end
         end
         
@@ -138,6 +142,7 @@ classdef StimulusRenderer < handle
                 Screen('DrawTexture', obj.window, imageTexture, [], dest_rect);
                 Screen('DrawingFinished', obj.window);
                 vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
+                Screen('Close', imageTexture);
             end
             
         end
