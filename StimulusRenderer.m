@@ -108,6 +108,8 @@ classdef StimulusRenderer < handle
             end
             waitframes = (1/obj.ifi) / framerate;
             
+            img = obj.imgChecker(img);
+
             vbl =  Screen('Flip', obj.window);
             frame_idx = 1;
             while obj.getTime() < t_close
@@ -136,6 +138,8 @@ classdef StimulusRenderer < handle
                 dest_rect = obj.rect;
             end
             
+            img = obj.imgChecker(img);
+
             vbl = Screen('Flip', obj.window);
             while obj.getTime() < t_close
                 [imageTexture] = Screen('MakeTexture', obj.window, img); % probably should add some checks here to make sure it works properly...
@@ -211,4 +215,10 @@ classdef StimulusRenderer < handle
             
         end
     end   
-end
+    methods (Access = protected) % Helpers
+        function img = imgChecker(img)
+            if ~isa(img, 'double') && ~isa(img, 'uint8')
+                img = double(img);
+            end
+        end
+    end
