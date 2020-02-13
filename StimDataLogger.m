@@ -81,6 +81,7 @@ classdef StimDataLogger < dynamicprops
                     stimdata.(props{ii}) = obj.(props{ii});
                 end
                 
+                keyboard
                 save_name = [obj.save_directory '\Stimdata_', date, '_', suffix];
                 save(save_name, 'stimdata');
                 
