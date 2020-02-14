@@ -16,12 +16,12 @@ n_presentations = length(orientation_list); % 8 different presentations (each ti
 
 DAQ_flag = 0; % For triggering the microscope
 
-manager = StimulusManager();
 % Instantiate objects
+manager = StimulusManager();
 manager.setScreenID(1);
 
-manager.initialize()
-manager.setTrigger(0); 
+manager.initialize();
+manager.setTrigger(DAQ_flag); 
 
 manager.start();
 

@@ -4,7 +4,7 @@ classdef FrameworkObject < handle
 	methods
 		function obj = FrameworkObject()
 		end
-
+ 	
 		function initialize(obj)
 		end
 

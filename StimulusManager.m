@@ -63,7 +63,32 @@ classdef StimulusManager < handle
 	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 3));
 	    end
 
-	    function presentImage(obj, presentation, repeat, ori)
+	    function presentImage(obj, presentation, repeat, img)
+	    	% pre blank
+	    	pre_blank_on = obj.timer.get()
+	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
+	        
+	        % draw image
+	        stim_on = obj.timer.get()
+	        obj.renderer.drawImage(obj.t_close(repeat, presentation, 2), img)   
+
+	        % post blank
+	        post_blank_on = obj.timer.get()
+	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 3));
+	    end
+
+	    function presentMovie(obj, presentation, repeat, movie)
+	    	% pre blank
+	    	pre_blank_on = obj.timer.get()
+	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
+	        
+	        % draw movie
+	        stim_on = obj.timer.get()
+	        obj.renderer.drawMovie(obj.t_close(repeat, presentation, 2), movie)   
+
+	        % post blank
+	        post_blank_on = obj.timer.get()
+	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 3));
 	    end
 	end
 end
