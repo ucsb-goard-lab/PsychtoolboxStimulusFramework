@@ -1,14 +1,22 @@
-classdef StimDataLogger < dynamicprops
+classdef StimDataLogger < dynamicprops & FrameworkObject
 %     The role of this class is to collect and export stimulus related information (repeats, on time, etc) for future analyses
 %     in a clean way. Heavily based on the "DataObject" class
 %     
 %     Written: 2020Jan20 KS
 %     Updated:
-    
-    
-    properties (Access = protected)
+
+
+properties (Access = protected)
         dynamicproperties % A property to refer to the other properties, for internal use only
         save_directory % Where to save all the data...
+
+
+        blank_time
+        pre_time
+        post_time
+        on_time
+        n_presentations
+        n_repeats
     end
     
     methods
@@ -29,6 +37,22 @@ classdef StimDataLogger < dynamicprops
             end
         end
         
+        function initialize(obj, save_dir)
+            if nargin < 2 || isempty(save_dir)
+                fprintf('Choose a save directory...\n')
+                save_dir = uigetdir();
+            end
+            obj.setSaveDirectory(save_dir);
+        end
+
+        function finish(obj, suffix)
+            if nargin < 2 || isempty(suffix)
+                temp = inputdlg('Please enter a suffix for you recording:');
+                suffix = temp{1};
+            end
+            obj.saveData(suffix)
+        end
+
         function add(obj,varargin) % In order to add more data to our object
             try
                 for ii = 1:nargin-1 % because there will always be "obj" there
@@ -56,46 +80,28 @@ classdef StimDataLogger < dynamicprops
                 obj.msgPrinter('Unknown error, data not added');
             end
         end
-        
+
         function setSaveDirectory(obj, save_dir)
-            if nargin < 2 || isempty(save_dir)
-                fprintf('Choose a save directory...\n')
-                obj.save_directory = uigetdir();
-            else
-                obj.save_directory = save_dir;
-            end
+            obj.save_directory = save_dir;
         end
+
         function saveData(obj, suffix)
-            if nargin < 2 || isempty(suffix)
-                temp = inputdlg('Please enter a suffix for you recording:');
-                suffix = temp{1};
-            end
-            
             if isempty(obj.save_directory)
                 obj.save_directory = uigetdir();
             end
             
             props = properties(obj);
-                stimdata = struct();
-                for ii = 1:size(props,1)
-                    stimdata.(props{ii}) = obj.(props{ii});
-                end
-                
-                keyboard
-                save_name = [obj.save_directory '\Stimdata_', date, '_', suffix];
-                save(save_name, 'stimdata');
-                
-                save_name_no_backslash = save_name;
-                save_name_no_backslash(strfind(save_name_no_backslash, '\')) = '/';
-                obj.msgPrinter(sprintf('Successfully saved stimulus data info as: "%s"', save_name_no_backslash));
-        end
-        
-        
-        end
-    
-    methods (Access = protected)
-        function msgPrinter(obj, str)
-            fprintf([str, '\n']);
+            stimdata = struct();
+            for ii = 1:size(props,1)
+                stimdata.(props{ii}) = obj.(props{ii});
+            end
+
+            save_name = [obj.save_directory '\Stimdata_', date, '_', suffix];
+            save(save_name, 'stimdata');
+
+            save_name_no_backslash = save_name;
+            save_name_no_backslash(strfind(save_name_no_backslash, '\')) = '/';
+            obj.msgPrinter(sprintf('Successfully saved stimulus data info as: "%s"', save_name_no_backslash));
         end
     end
 end

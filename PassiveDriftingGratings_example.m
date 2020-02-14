@@ -29,7 +29,7 @@ triggerer.initialize(); % If not enabled, nothing will happen, prevents us from 
 renderer.initialize(); % this will also open the window
 
 % Start stimulus presentation
-triggerer.sendTrigger(); % Triggers if enabled
+triggerer.sendTrigger(); % chg to start
 renderer.startTimer();
 
 for rep = 1:repeats
@@ -49,7 +49,7 @@ end
 
 tfinal = renderer.getTime()
 
-triggerer.cleanUp();
-renderer.cleanUp();
+triggerer.cleanUp(); % chg to finish
+renderer.cleanUp(); %chg to finish
 
 logger.saveData(); % save your stimdata

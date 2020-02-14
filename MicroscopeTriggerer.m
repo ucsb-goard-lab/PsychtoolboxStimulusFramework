@@ -1,4 +1,4 @@
-classdef MicroscopeTriggerer < handle
+classdef MicroscopeTriggerer < FrameworkObject
     % Simple class for handling all microscope related stuff, triggering scopes depending on which one, etc...
     
     % Written 2020Jan20 KS
@@ -19,6 +19,11 @@ classdef MicroscopeTriggerer < handle
                 microscope = questdlg('Which microscope are you using?',...
                     'Microscope', '2P', 'widefield', '2P');
             end
+
+            if nargin < 2 || isempty(enabled)
+                enabled = 0;
+            end
+
             obj.microscope = microscope;
             obj.enabled = enabled;
         end
@@ -46,7 +51,7 @@ classdef MicroscopeTriggerer < handle
             end
         end
         
-        function sendTrigger(obj)
+        function start(obj)
             if obj.enabled
                 switch obj.microscope
                     case '2P'
@@ -57,7 +62,7 @@ classdef MicroscopeTriggerer < handle
             end
         end
         
-        function cleanUp(obj)
+        function finish(obj)
             if obj.enabled
                 switch obj.microscope
                     case '2P'
@@ -67,6 +72,10 @@ classdef MicroscopeTriggerer < handle
                         obj.s.outputSingleScan(0);
                 end
             end
+        end
+
+        function setTrigger(obj, enable)
+            obj.enabled = enable;
         end
     end
 end

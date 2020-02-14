@@ -1,4 +1,4 @@
-classdef StimulusRenderer < handle
+classdef StimulusRenderer < FrameworkObject
     % A simple wrapper that covers most of the Psychtoolbox functions we use in the Goard Lab to make developing new stimuli
     % much easier...
     
@@ -11,22 +11,23 @@ classdef StimulusRenderer < handle
     end
     
     properties (Access = protected)
+        timer_handle
         window % pointer to psychtoolbox's window
         ifi % inter-frame-interval for timing
         rect % rectangle on the window to draw to
-        t_start % initial starting time, used to calculate other times
     end
     
     methods % all these methods need to take tclose as the input argument
         function obj = StimulusRenderer()
-            % Empty
         end
         
-        function initialize(obj, screen_id)
+        function initialize(obj, manager, screen_id)
             %% Initializes psychtoolbox and gets everything set up properly...
-            if nargin < 2 || isempty(screen_id)
+            if nargin < 3 || isempty(screen_id)
                 screen_id = obj.screen_id;
             end
+
+            obj.timer_handle = manager.timer;
             
             % Skip sync test
             Screen('Preference','SkipSyncTests',1);
@@ -63,21 +64,11 @@ classdef StimulusRenderer < handle
             obj.screen_id = screen_id;
         end
         
-        function startTimer(obj)
-            % This should be run immediately before starting the stimulus, for accurate timing
-            obj.t_start = GetSecs;
-        end
-        
         function cleanUp(obj)
             % Simple function just for cleaning up after we're done
             Priority(0);
             sca;
             close all;
-        end
-        
-        function out = getTime(obj)
-            % Getting time for both internal and external uses
-            out = GetSecs - obj.t_start;
         end
     end
     
@@ -207,12 +198,15 @@ classdef StimulusRenderer < handle
                 % Show it at next retrace:
                 vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
             end
-            
+            Screen('Close', gratingtex)
             return;
             
         end
     end   
     methods (Access = protected) % Helpers
+        function time = getTime(obj)
+            time = obj.timer_handle.get();
+        end
         function img = imgChecker(img)
             if ~isa(img, 'double') && ~isa(img, 'uint8')
                 img = double(img);
