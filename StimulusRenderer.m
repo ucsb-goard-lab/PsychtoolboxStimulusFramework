@@ -1,17 +1,17 @@
 classdef StimulusRenderer < FrameworkObject
-    % A simple wrapper that covers most of the Psychtoolbox functions we use in the Goard Lab to make developing new stimuli
-    % much easier...
-    
-    % Written 2020Jan20
-    % Updated
-    
+    %{
+    A simple wrapper that covers most of the Psychtoolbox functions we use in the Goard Lab to make developing new stimuli much easier. Easy to develop on to add more functions. Make sure for each "draw" function added here, a "present" function is included in the manager.. We should probably change this later so that we don't need to add so many methods, and just have one method in the manager that can call different renderer methods. Potentially, we could use a name-pair argument pass in, coupled with varargin, but I'm not sure that's clean...
+
+    % Written 20Jan2020 KS
+    % Updated 14Feb2020
+    %}
     properties
         screen_id = 1; % Which display to present things on
         background = 0.5; % Default background brightness
     end
     
     properties (Access = protected)
-        timer_handle
+        timer_handle % handle to the timer
         window % pointer to psychtoolbox's window
         ifi % inter-frame-interval for timing
         rect % rectangle on the window to draw to
@@ -203,6 +203,7 @@ classdef StimulusRenderer < FrameworkObject
             
         end
     end   
+    
     methods (Access = protected) % Helpers
         function time = getTime(obj)
             time = obj.timer_handle.get();

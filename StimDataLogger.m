@@ -1,16 +1,17 @@
 classdef StimDataLogger < dynamicprops & FrameworkObject
-%     The role of this class is to collect and export stimulus related information (repeats, on time, etc) for future analyses
-%     in a clean way. Heavily based on the "DataObject" class
-%     
-%     Written: 2020Jan20 KS
-%     Updated:
+    %{
+     The role of this class is to collect and export stimulus related information (repeats, on time, etc) for future analyses
+     in a clean way. Heavily based on the "DataObject" class, which has since been deprecated. The DataObject class allows us to dynamically add properties to the class for easy export
+     
+     Written: 20Jan2020 KS
+     Updated: 14Feb2020 KS Updated for new framework
+    %}
 
-
-properties (Access = protected)
+    properties (Access = protected)
         dynamicproperties % A property to refer to the other properties, for internal use only
         save_directory % Where to save all the data...
 
-
+        % These are all necessary stimulus parmaeters for the automated analysis
         blank_time
         pre_time
         post_time

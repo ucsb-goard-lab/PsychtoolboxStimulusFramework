@@ -1,4 +1,11 @@
 classdef FrameworkObject < handle
+	%{
+	A simple wrapper just for all the objects. This will be used later to easily call methods on all objects through a for loop intsead of manually calling each one
+	
+	Written 14Feb2020 KS
+	Updated 
+	%}
+
 	properties
 	end
 	methods

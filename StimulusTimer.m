@@ -1,11 +1,17 @@
 classdef StimulusTimer < FrameworkObject
-	properties
-		on_time
-		post_time
-		pre_time
+    %{
+    This class handles all the timing and time calculations for the stimulus presentation. 
 
-		n_presentations
-		n_repeats
+    Written 14Feb2020 KS
+    Updated
+    %}
+    properties
+      on_time
+      post_time
+      pre_time
+
+      n_presentations
+      n_repeats
 
         t_start % initial starting time, used to calculate other times
         t_close_matrix 
@@ -52,34 +58,25 @@ classdef StimulusTimer < FrameworkObject
             out = GetSecs - obj.t_start;
         end
 
+        function out = getTClose(obj);
+        	out = obj.t_close_matrix;
+        end
+
+    end
+ methods (Access = protected)
         function out = calculatePreClose(obj, presentation, repeat)
-        	out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
-        	(presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time;
+            out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
+            (presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time;
         end
 
         function out = calculateStimClose(obj, presentation, repeat)
-        	out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
-        	(presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time + obj.on_time;
+            out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
+            (presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time + obj.on_time;
         end
 
         function out = calculatePostClose(obj, presentation, repeat)
-        	out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
-        	(presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time + obj.on_time  + obj.post_time;
-        end
-
-        function out = calculateTCloses(obj)
-        	out = zeros(obj.n_repeats, obj.n_presentations, 3);
-        	for r = 1:obj.n_repeats
-        		for p = 1:obj.n_presentations
-        			out(r, p, 1) = obj.calculatePreClose(p, r);
-        			out(r, p, 2) = obj.calculateStimClose(p, r);
-        			out(r, p, 3) = obj.calculatePostClose(p, r);
-        		end
-        	end
-        end
-
-        function out = getTClose(obj);
-        	out = obj.t_close_matrix;
+            out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
+            (presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time + obj.on_time  + obj.post_time;
         end
     end
 end

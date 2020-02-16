@@ -1,20 +1,29 @@
 classdef StimulusManager < handle
+	%{
+	The stimulus manager is the main interface for dealing with all the subclasses. Upon instantiating the StimulusManager, each other class for the necessary use of the framework is also instantiated. Then, the StimulusManager is the only class that needs to be dealt with, and will correctly pass arguments to the proper object for stimulus presentation
+
+	Written 14Feb2020 KS
+	Updated
+	%}
+
 	properties
+		% Pointers to each of the required "subojects"
 		renderer
 		logger
 		triggerer
 		timer
 
+		% One large matrix of t_closes, for faster operation
 		t_close
 	end
 
 	methods
 		function obj = StimulusManager()
+			% Instantiate all the objects
 			obj.logger = StimDataLogger();
 			obj.timer = StimulusTimer();
 			obj.triggerer = MicroscopeTriggerer();
 			obj.renderer = StimulusRenderer();
-
 		end
 
 		function setScreenID(obj, id)
@@ -49,7 +58,8 @@ classdef StimulusManager < handle
 			obj.triggerer.setTrigger(enable);
 		end
 
-		function presentDriftingGrating(obj, presentation, repeat, ori, spat_freq, temp_freq, contrast, phase, patch_size)			
+		function presentDriftingGrating(obj, presentation, repeat, ori, spat_freq, temp_freq, contrast, phase, patch_size)
+			% Presents a drifting grating, similar to PassiveDriftingGratings.m
 	        % pre blank
 	        pre_blank_on = obj.timer.get()
 	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
@@ -64,6 +74,7 @@ classdef StimulusManager < handle
 	    end
 
 	    function presentImage(obj, presentation, repeat, img)
+	    	% Presents a single static image, has some checks to make sure the image is compatible
 	    	% pre blank
 	    	pre_blank_on = obj.timer.get()
 	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
@@ -78,6 +89,7 @@ classdef StimulusManager < handle
 	    end
 
 	    function presentMovie(obj, presentation, repeat, movie)
+	    	% Presents a single moving image (aka movie).
 	    	% pre blank
 	    	pre_blank_on = obj.timer.get()
 	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
