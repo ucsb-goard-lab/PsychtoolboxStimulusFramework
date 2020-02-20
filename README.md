@@ -1,6 +1,8 @@
 # Psychtoolbox Stimulus Framework
 ## Purpose
-A simple set of classes to make developing and using psychtoolbox more user-friendly and less prone to stupid errors. Each portion of the usual stimulus code is separated into its own class, so there is less chance for crosstalk or confusion.
+A simple set of classes to make developing and using psychtoolbox more user-friendly and less prone to stupid errors. Each portion of the usual stimulus code is separated into its own class, so there is less chance for crosstalk or confusion.  
+  
+Importantly, the code also enforces a strict structure for both timing and presentation order of stimuli. This is primarily in order to allow for easy design of simple stimuli, at the expense of flexibility for more complex stimuli.
 
 ## Contents
 ### FrameworkObject
