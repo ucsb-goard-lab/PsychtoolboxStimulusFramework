@@ -18,24 +18,24 @@ classdef StimulusTimer < FrameworkObject
 
     methods
     	function obj = StimulusTimer()
-    	end
-
-    	function initialize(obj)
             obj.extractValues();
-    		obj.msgPrinter(sprintf('Stimulus duration : %d seconds', obj.getStimulusDuration()));
-    	end
+        end
 
-    	function out = getStimulusDuration(obj)
-    		out = ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) * obj.n_repeats;
-    	end
+        function initialize(obj)
+          obj.msgPrinter(sprintf('Stimulus duration : %d seconds', obj.getStimulusDuration()));
+        end
 
-    	function start(obj)
+        function out = getStimulusDuration(obj)
+          out = ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) * obj.n_repeats;
+        end
+
+        function start(obj)
             % This should be run immediately before starting the stimulus, for accurate timing
             obj.t_start = GetSecs;
         end
 
         function finish(obj)
-        	obj.msgPrinter('Total stimulus duration: %s seconds', obj.get());
+        	obj.msgPrinter(sprintf('Total stimulus duration: %s seconds', obj.get()));
         end
 
 		function extractValues(obj) % Don't kill me MATLAB gods
