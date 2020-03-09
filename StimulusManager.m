@@ -15,6 +15,9 @@ classdef StimulusManager < handle
 
 		% One large matrix of t_closes, for faster operation
 		t_close
+
+		current_repeat = 1
+		current_presentation = 0 % I know... I don't like it either, but it works
 	end
 
 	methods
@@ -44,7 +47,7 @@ classdef StimulusManager < handle
 			obj.triggerer.start();
 			obj.timer.start();
 
-			obj.t_close = obj.timer.getTClose();
+			% obj.t_close = obj.timer.getTClose();
 		end
 
 		function finish(obj)
@@ -58,49 +61,53 @@ classdef StimulusManager < handle
 			obj.triggerer.setTrigger(enable);
 		end
 
-		function presentDriftingGrating(obj, presentation, repeat, ori, spat_freq, temp_freq, contrast, phase, patch_size)
-			% Presents a drifting grating, similar to PassiveDriftingGratings.m
-	        % pre blank
-	        pre_blank_on = obj.timer.get()
-	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
+		function present(obj, stim_type, varargin)
+	    	obj.increment(); % Increments the manager's counters
+
+	    	% pre_blank_on = obj.timer.get()
+	    	obj.report('Pre blank'); % spaces are for alignment
+	        obj.renderer.drawBlank(obj.timer.calculatePreClose(obj.current_presentation, obj.current_repeat)); % everything else is held in the object
 	        
-	        % draw grating
-	        stim_on = obj.timer.get()
-	        obj.renderer.drawDriftingGrating(obj.t_close(repeat, presentation, 2), ori)   
+	        % stim_on = obj.timer.get()
+	        obj.report('Stimulus');
+	        obj.instructRenderer(stim_type, obj.timer.calculateStimClose(obj.current_presentation, obj.current_repeat), varargin{:});
 
 	        % post blank
-	        post_blank_on = obj.timer.get()
-	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 3));
+	        % post_blank_on = obj.timer.get()
+	        obj.report('Post blank')
+	        obj.renderer.drawBlank(obj.timer.calculatePostClose(obj.current_presentation, obj.current_repeat));
+	    end
+	end
+
+	methods (Access = private)
+		function instructRenderer(obj, stim_type, t_close, varargin)
+			switch stim_type
+			case 'grating'
+				obj.renderer.drawDriftingGrating(t_close, varargin{:});
+			case 'image'
+				obj.renderer.drawImage(t_close, varargin{:});
+			case 'movie'
+				obj.renderer.drawMovie(t_close, varargin{:});
+			case 'blank'
+				obj.renderer.drawBlank(t_close, varargin{:});
+			end
+		end
+
+		function increment(obj)
+			if obj.current_presentation < obj.timer.n_presentations
+	    		obj.current_presentation = obj.current_presentation + 1; % increment
+	    	else
+	    		obj.current_presentation = 1;
+	    		obj.current_repeat = obj.current_repeat + 1; % increment repeats when we hit presentations
+	    	end
 	    end
 
-	    function presentImage(obj, presentation, repeat, img)
-	    	% Presents a single static image, has some checks to make sure the image is compatible
-	    	% pre blank
-	    	pre_blank_on = obj.timer.get()
-	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
-	        
-	        % draw image
-	        stim_on = obj.timer.get()
-	        obj.renderer.drawImage(obj.t_close(repeat, presentation, 2), img)   
-
-	        % post blank
-	        post_blank_on = obj.timer.get()
-	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 3));
-	    end
-
-	    function presentMovie(obj, presentation, repeat, movie)
-	    	% Presents a single moving image (aka movie).
-	    	% pre blank
-	    	pre_blank_on = obj.timer.get()
-	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 1)); % everything else is held in the object
-	        
-	        % draw movie
-	        stim_on = obj.timer.get()
-	        obj.renderer.drawMovie(obj.t_close(repeat, presentation, 2), movie)   
-
-	        % post blank
-	        post_blank_on = obj.timer.get()
-	        obj.renderer.drawBlank(obj.t_close(repeat, presentation, 3));
+	    function report(obj, epoch)
+	    	if strcmp(epoch, 'Pre blank')
+	    		fprintf('Presentation #%02d/%02d | Repeat #%02d/%02d | %s (%0.2f)\n', obj.current_presentation, obj.timer.n_presentations, obj.current_repeat, obj.timer.n_repeats, pad([epoch ' on'], 13, 'right'), obj.timer.get());
+	    	else
+	    		fprintf('                    |               | %s (%0.2f)\n', pad([epoch ' on'], 13, 'right'), obj.timer.get());
+	    	end
 	    end
 	end
 end

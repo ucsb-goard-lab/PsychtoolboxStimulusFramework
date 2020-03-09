@@ -24,7 +24,7 @@ classdef StimulusTimer < FrameworkObject
 
     	function initialize(obj)
     		obj.msgPrinter(sprintf('Stimulus duration : %d seconds', obj.getStimulusDuration()));
-    		obj.t_close_matrix = obj.calculateTCloses();
+    		% obj.t_close_matrix = obj.calculateTCloses();
     	end
 
     	function out = getStimulusDuration(obj)
@@ -58,12 +58,11 @@ classdef StimulusTimer < FrameworkObject
             out = GetSecs - obj.t_start;
         end
 
-        function out = getTClose(obj);
-        	out = obj.t_close_matrix;
-        end
-
+        % function out = getTClose(obj);
+        % 	out = obj.t_close_matrix;
+        % end
     end
- methods (Access = protected)
+ methods (Access = public)
         function out = calculatePreClose(obj, presentation, repeat)
             out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
             (presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time;

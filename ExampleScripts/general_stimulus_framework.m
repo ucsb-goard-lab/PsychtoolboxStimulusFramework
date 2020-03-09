@@ -31,9 +31,7 @@ manager.start();
 for r = 1:n_repeats
 	for p = 1:n_presentations
 		% Choose one, not all 3...
-		manager.presentDriftingGrating(p, r, orientation); % for drifting gratings
-		manager.presentImages(p, r, image); % for static images
-		manager.presentMovie(p, r, movie); % for moving images
+		manager.present('stimtype', data); % where "stitype" can be "image", "grating", "movie" with the appropriate data included
 	end
 end
 

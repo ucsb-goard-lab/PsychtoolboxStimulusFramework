@@ -102,7 +102,6 @@ classdef StimulusRenderer < FrameworkObject
             vbl =  Screen('Flip', obj.window);
             frame_idx = 1;
             while obj.getTime() < t_close
-                disp(frame_idx)
                 [imageTexture] = Screen('MakeTexture', obj.window, movie(:, :, frame_idx)); % probably should add some checks here to make sure it works properly...
                 Screen('DrawTexture', obj.window, imageTexture, [], obj.rect);
                 Screen('DrawingFinished', obj.window);
@@ -208,7 +207,7 @@ classdef StimulusRenderer < FrameworkObject
         function time = getTime(obj)
             time = obj.timer_handle.get();
         end
-        function img = imgChecker(img)
+        function img = imgChecker(obj, img)
             if ~isa(img, 'double') && ~isa(img, 'uint8')
                 img = double(img);
             end

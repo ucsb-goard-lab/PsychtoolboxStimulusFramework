@@ -27,6 +27,6 @@ manager.start();
 
 for r = 1:n_repeats
 	for p = 1:n_presentations
-		manager.presentMovie(p, r, movie)
+		manager.present('movie', movie)
 	end
 end
