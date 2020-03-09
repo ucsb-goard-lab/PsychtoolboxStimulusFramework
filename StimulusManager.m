@@ -13,9 +13,6 @@ classdef StimulusManager < handle
 		triggerer
 		timer
 
-		% One large matrix of t_closes, for faster operation
-		t_close
-
 		current_repeat = 1
 		current_presentation = 0 % I know... I don't like it either, but it works
 	end
@@ -46,8 +43,6 @@ classdef StimulusManager < handle
 			obj.logger.start();
 			obj.triggerer.start();
 			obj.timer.start();
-
-			% obj.t_close = obj.timer.getTClose();
 		end
 
 		function finish(obj)
@@ -64,16 +59,12 @@ classdef StimulusManager < handle
 		function present(obj, stim_type, varargin)
 	    	obj.increment(); % Increments the manager's counters
 
-	    	% pre_blank_on = obj.timer.get()
 	    	obj.report('Pre blank'); % spaces are for alignment
 	        obj.renderer.drawBlank(obj.timer.calculatePreClose(obj.current_presentation, obj.current_repeat)); % everything else is held in the object
 	        
-	        % stim_on = obj.timer.get()
 	        obj.report('Stimulus');
 	        obj.instructRenderer(stim_type, obj.timer.calculateStimClose(obj.current_presentation, obj.current_repeat), varargin{:});
 
-	        % post blank
-	        % post_blank_on = obj.timer.get()
 	        obj.report('Post blank')
 	        obj.renderer.drawBlank(obj.timer.calculatePostClose(obj.current_presentation, obj.current_repeat));
 	    end

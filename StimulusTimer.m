@@ -6,25 +6,22 @@ classdef StimulusTimer < FrameworkObject
     Updated
     %}
     properties
-      on_time
-      post_time
-      pre_time
+        on_time
+        post_time
+        pre_time
 
-      n_presentations
-      n_repeats
+        n_presentations
+        n_repeats
 
         t_start % initial starting time, used to calculate other times
-        t_close_matrix 
     end
 
     methods
     	function obj = StimulusTimer()
-    		obj.extractValues();
     	end
 
     	function initialize(obj)
     		obj.msgPrinter(sprintf('Stimulus duration : %d seconds', obj.getStimulusDuration()));
-    		% obj.t_close_matrix = obj.calculateTCloses();
     	end
 
     	function out = getStimulusDuration(obj)
@@ -57,12 +54,7 @@ classdef StimulusTimer < FrameworkObject
             % Getting time for both internal and external uses
             out = GetSecs - obj.t_start;
         end
-
-        % function out = getTClose(obj);
-        % 	out = obj.t_close_matrix;
-        % end
-    end
- methods (Access = public)
+        
         function out = calculatePreClose(obj, presentation, repeat)
             out = (repeat - 1) * ((obj.pre_time + obj.on_time + obj.post_time) * obj.n_presentations) + ...
             (presentation - 1) * (obj.pre_time + obj.on_time + obj.post_time) + obj.pre_time;
