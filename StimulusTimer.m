@@ -21,6 +21,7 @@ classdef StimulusTimer < FrameworkObject
     	end
 
     	function initialize(obj)
+            obj.extractValues();
     		obj.msgPrinter(sprintf('Stimulus duration : %d seconds', obj.getStimulusDuration()));
     	end
 
