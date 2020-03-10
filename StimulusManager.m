@@ -36,6 +36,8 @@ classdef StimulusManager < handle
 			obj.triggerer.initialize(obj.timer.getStimulusDuration()); % Pass into the triggerer
 			obj.timer.initialize();
 			obj.renderer.initialize(obj);
+
+			obj.logDefaults();
 		end
 
 		function start(obj)
@@ -56,6 +58,10 @@ classdef StimulusManager < handle
 			obj.triggerer.setTrigger(enable);
 		end
 
+		function log(obj, input)
+			obj.logger.add(input);
+		end
+
 		function present(obj, stim_type, varargin)
 	    	obj.increment(); % Increments the manager's counters
 
@@ -71,6 +77,15 @@ classdef StimulusManager < handle
 	end
 
 	methods (Access = private)
+		function logDefaults(obj)
+			% Pass necessary things into the logger
+			obj.logger.on_time = obj.timer.on_time; 
+			obj.logger.pre_time = obj.timer.pre_time;
+			obj.logger.post_time = obj.timer.post_time;
+			obj.logger.n_presentations = obj.timer.n_presentations;
+			obj.logger.n_repeats = obj.timer.n_repeats;
+		end
+
 		function instructRenderer(obj, stim_type, t_close, varargin)
 			switch stim_type
 			case 'grating'

@@ -10,9 +10,12 @@ classdef StimDataLogger < dynamicprops & FrameworkObject
     properties (Access = protected)
         dynamicproperties % A property to refer to the other properties, for internal use only
         save_directory % Where to save all the data...
-
+        suffix % to append to the stimulus data file
+        
         % These are all necessary stimulus parmaeters for the automated analysis
-        blank_time
+    end
+
+    properties (Access = public)
         pre_time
         post_time
         on_time
@@ -26,9 +29,9 @@ classdef StimDataLogger < dynamicprops & FrameworkObject
             else
                 for ii = 1:nargin % Loops through the input arguments
                     if ischar(varargin{1})
-                        evalin('caller',[varargin{ii} ';']); % this is an initial check to see if the variable exists
+                        evalin('base',[varargin{ii} ';']); % this is an initial check to see if the variable exists
                         p(ii) = obj.addprop(varargin{ii}); % adds them as dynamic properties
-                        obj.(varargin{ii}) = evalin('caller',[varargin{ii} ';']); % Fills in those properties with the values
+                        obj.(varargin{ii}) = evalin('base',[varargin{ii} ';']); % Fills in those properties with the values
                     else
                         p(ii) = obj.addprop(inputname(ii));
                         obj.(inputname(ii)) = varargin{ii};
@@ -38,20 +41,24 @@ classdef StimDataLogger < dynamicprops & FrameworkObject
             end
         end
         
-        function initialize(obj, save_dir)
+        function initialize(obj, save_dir, suffix)
             if nargin < 2 || isempty(save_dir)
                 fprintf('Choose a save directory...\n')
                 save_dir = uigetdir();
             end
+            
+            if nargin < 3 || isempty(suffix)
+                temp = inputdlg('Please enter a suffix for you recording:');
+                obj.suffix = temp{1};
+            else
+                obj.suffix = suffix;
+            end
+            
             obj.setSaveDirectory(save_dir);
         end
 
-        function finish(obj, suffix)
-            if nargin < 2 || isempty(suffix)
-                temp = inputdlg('Please enter a suffix for you recording:');
-                suffix = temp{1};
-            end
-            obj.saveData(suffix)
+        function finish(obj)
+            obj.saveData()
         end
 
         function add(obj,varargin) % In order to add more data to our object
@@ -65,7 +72,7 @@ classdef StimDataLogger < dynamicprops & FrameworkObject
                             obj.msgPrinter(sprintf('Overwriting: %s',varargin{ii}));
                         end
                         dynprops(ii) = obj.addprop(varargin{ii}); % adds them as dynamic properties
-                        obj.(varargin{ii}) = evalin('caller',[varargin{ii} ';']); % Fills in those properties with the values
+                        obj.(varargin{ii}) = evalin('base',[varargin{ii} ';']); % Fills in those properties with the values
                     else
                         if ismember(inputname(ii+1),properties(obj))
                             obj.remove(inputname(ii+1));
@@ -86,7 +93,7 @@ classdef StimDataLogger < dynamicprops & FrameworkObject
             obj.save_directory = save_dir;
         end
 
-        function saveData(obj, suffix)
+        function saveData(obj)
             if isempty(obj.save_directory)
                 obj.save_directory = uigetdir();
             end
@@ -97,7 +104,7 @@ classdef StimDataLogger < dynamicprops & FrameworkObject
                 stimdata.(props{ii}) = obj.(props{ii});
             end
 
-            save_name = [obj.save_directory '\Stimdata_', date, '_', suffix];
+            save_name = [obj.save_directory '\Stimdata_', date, '_', obj.suffix];
             save(save_name, 'stimdata');
 
             save_name_no_backslash = save_name;

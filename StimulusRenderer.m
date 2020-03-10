@@ -64,7 +64,7 @@ classdef StimulusRenderer < FrameworkObject
             obj.screen_id = screen_id;
         end
         
-        function cleanUp(obj)
+        function finish(obj)
             % Simple function just for cleaning up after we're done
             Priority(0);
             sca;
