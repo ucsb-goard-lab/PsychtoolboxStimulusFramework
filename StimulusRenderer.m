@@ -98,7 +98,6 @@ classdef StimulusRenderer < FrameworkObject
                 framerate = 30; %Hz
             end
             waitframes = (1/obj.ifi) / framerate;
-            
             vbl =  Screen('Flip', obj.window);
             frame_idx = 1;
             while obj.getTime() < t_close
