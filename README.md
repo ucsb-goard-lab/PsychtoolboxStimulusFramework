@@ -12,7 +12,10 @@ A simple class just for handling all our objects and to provide them with some b
 This is the main class that users will interact with. The Manager contains handles to all other classes, and will properly route commands to the appropriate class.  
 
 ### StimulusRenderer
-This class handles all the stimulus rendering and setting up of psychtoolbox. Contains a couple built-in methods that should cover 90% of the stimuli we use: drawBlank, drawDriftingGrating, drawImage, and drawMovie. Also hold all the timing information.
+This class handles all the stimulus rendering and setting up of psychtoolbox. The Renderer works hand in hand with a Renderable, which contains specific stimulus information to be presented.
+
+### Renderable
+Renderables are the stimuli themselves. These classes hold the stimulus parameters and include a "draw" method to correctly draw when called on by the Renderer. For example, the "Image" class, contains an image and display properties of that image. For each image you want to use in your stimulus, create another instance of the "Image" class.
 
 ### MicroscopeTriggerer
 An easy wrapper for converting code from "two-photon" to "widefield" code by simply allowing you to change which microscope system you're on. Sets up the DAQ based on some defaults and triggers appropriately.
