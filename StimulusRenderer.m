@@ -15,10 +15,13 @@ classdef StimulusRenderer < FrameworkObject
         window % pointer to psychtoolbox's window
         ifi % inter-frame-interval for timing
         rect % rectangle on the window to draw to
+
+        renderable
     end
     
     methods % all these methods need to take tclose as the input argument
-        function obj = StimulusRenderer()
+        function obj = StimulusRenderer(renderable)
+            obj.renderable = renderable;
         end
         
         function initialize(obj, manager, screen_id)
@@ -57,6 +60,11 @@ classdef StimulusRenderer < FrameworkObject
             
             % Make sure the GLSL shading language is supported:
             AssertGLSL;
+
+            % Inject information to the renderable
+            for r = obj.renderable
+                r.setRenderer(obj);
+            end
         end
         
         function setScreenID(obj, screen_id)
@@ -92,22 +100,9 @@ classdef StimulusRenderer < FrameworkObject
             end
             return
         end
-        
-        function drawMovie(obj, t_close, movie, framerate)
-            if nargin < 4 || isempty(framerate)
-                framerate = 30; %Hz
-            end
-            waitframes = (1/obj.ifi) / framerate;
-            vbl =  Screen('Flip', obj.window);
-            frame_idx = 1;
-            while obj.getTime() < t_close
-                [imageTexture] = Screen('MakeTexture', obj.window, movie(:, :, frame_idx)); % probably should add some checks here to make sure it works properly...
-                Screen('DrawTexture', obj.window, imageTexture, [], obj.rect);
-                Screen('DrawingFinished', obj.window);
-                vbl = Screen('Flip', obj.window, vbl + (waitframes) * obj.ifi);
-                frame_idx = mod(frame_idx, size(movie, 3)) + 1;
-            end
-            Screen('Close', imageTexture);
+
+        function drawStimulus(obj, idx, t_close)
+            obj.renderable(idx).draw(t_close);
         end
         
         function drawImage(obj, t_close, img, stretch_flag)
@@ -137,79 +132,28 @@ classdef StimulusRenderer < FrameworkObject
             Screen('Close', imageTexture);
         end
         
-        function drawDriftingGrating(obj, t_close, ori, spat_freq, temp_freq, contrast, phase, patch_size)
-            %% From MG function "DrawDriftingGrating.m"
-            % Setting default parameters
-            if nargin < 3 || isempty(ori)
-                ori = 0;
-            end
-            
-            if nargin < 4 || isempty(spat_freq)
-                spat_freq = 0.004;
-            end
-            
-            if nargin < 5 || isempty(temp_freq)
-                temp_freq = 2;
-            end
-            
-            if nargin < 6 || isempty(contrast)
-                contrast = 1;
-            end
-            
-            if nargin < 7 || isempty(phase)
-                phase = 0;
-            end
-            
-            if nargin < 8 || isempty(patch_size)
-                patch_size = 1000; %pixels
-            end
-            
-            % Calculate parameters
-            amplitude = contrast/2;
-            
-            % Internal rotation (default = 1)
-            internalRotation = 1; % Rotate grating within patch (1) or entire patch (0)
-            
-            if internalRotation==1
-                rotateMode = kPsychUseTextureMatrixForRotation;
-            elseif internalRotation==0
-                rotateMode = [];
-            end
-            
-            % Compute increment of phase shift per redraw:
-            phaseincrement = (temp_freq * 360) * obj.ifi;
-            
-            % Build a procedural sine grating texture
-            gratingtex = CreateProceduralSineGrating(obj.window, patch_size, patch_size, [0.5 0.5 0.5 0.0]);
-            
-            % Update some grating animation parameters:
-            vbl = Screen('Flip', obj.window);
-            
-            while obj.getTime() < t_close
-                % Increment phase by 1 degree:
-                phase = phase + phaseincrement;
-                
-                % Draw the grating:
-                Screen('DrawTexture',obj.window, gratingtex, obj.rect, obj.rect, ori, ...
-                    [], [], [], [], rotateMode, [phase, spat_freq, amplitude, 0]);
-                Screen('DrawingFinished', obj.window);
-                % Show it at next retrace:
-                vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
-            end
-            Screen('Close', gratingtex)
-            return;
-            
+        % Getters
+        function out = getScreenID(obj)
+            out = obj.screen_id;
         end
-    end   
-    
-    methods (Access = protected) % Helpers
+
+        function out = getIFI(obj)
+            out = obj.ifi;
+        end
+
+        function out = getWindow(obj)
+            out = obj.window;
+        end
+
+        function out = getRect(obj, vtx)
+            if nargin < 2 || isempty(vtx)
+                vtx = [1:4];
+            end
+            out = obj.rect(vtx);
+        end
+
         function time = getTime(obj)
             time = obj.timer_handle.get();
         end
-        function img = imgChecker(obj, img)
-            if ~isa(img, 'double') && ~isa(img, 'uint8')
-                img = double(img);
-            end
-        end
-    end
+    end   
 end

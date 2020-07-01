@@ -17,7 +17,9 @@ DAQ_flag = 0;
 % Load movie
 movie = importdata('C:\Users\sit\Dropbox\StimulusPresentation\NaturalScenes\MovieDatabase\TouchofEvil\TouchofEvil.mat');
 
-manager = StimulusManager();
+stimulus = Movie(movie);
+
+manager = StimulusManager(stimulus);
 manager.setScreenID(1);
 
 manager.initialize();
@@ -27,6 +29,6 @@ manager.start();
 
 for r = 1:n_repeats
 	for p = 1:n_presentations
-		manager.present('movie', movie)
+		manager.present()
 	end
 end

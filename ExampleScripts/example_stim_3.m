@@ -16,8 +16,12 @@ DAQ_flag = 0;
 image_matrix = importdata('C:\Users\sit\Dropbox\CodeInBeta_Kevin\Amani Project\TextureStimuli\image_matrix.mat'); % load the image matrix
 n_presentations = size(image_matrix, 3);
 
+for n = 1:n_presentations
+    stimulus(n) = Image(image_matrix(:, :, n));
+end
+
 % Instantiate objects
-manager = StimulusManager();
+manager = StimulusManager(stimulus);
 manager.setScreenID(1);
 
 manager.initialize();
@@ -27,7 +31,7 @@ manager.start();
 
 for r = 1:n_repeats
 	for p = 1:n_presentations
-		manager.present('image', image_matrix(:, :, p));
+		manager.present(p);
 	end
 end
 

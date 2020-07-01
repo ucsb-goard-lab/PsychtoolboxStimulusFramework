@@ -18,12 +18,12 @@ classdef StimulusManager < handle
 	end
 
 	methods
-		function obj = StimulusManager()
+		function obj = StimulusManager(renderable)
 			% Instantiate all the objects
 			obj.logger = StimDataLogger();
 			obj.timer = StimulusTimer();
 			obj.triggerer = MicroscopeTriggerer();
-			obj.renderer = StimulusRenderer();
+			obj.renderer = StimulusRenderer(renderable);
 		end
 
 		function setScreenID(obj, id)
@@ -62,14 +62,18 @@ classdef StimulusManager < handle
 			obj.logger.add(input);
 		end
 
-		function present(obj, stim_type, varargin)
+		function present(obj, renderable_idx)
+			if nargin < 2 || isempty(renderable_idx)
+				renderable_idx = 1;
+			end
+			
 	    	obj.increment(); % Increments the manager's counters
 
 	    	obj.report('Pre blank'); % spaces are for alignment
 	        obj.renderer.drawBlank(obj.timer.calculatePreClose(obj.current_presentation, obj.current_repeat)); % everything else is held in the object
 	        
 	        obj.report('Stimulus');
-	        obj.instructRenderer(stim_type, obj.timer.calculateStimClose(obj.current_presentation, obj.current_repeat), varargin{:});
+	        obj.renderer.drawStimulus(renderable_idx, obj.timer.calculateStimClose(obj.current_presentation, obj.current_repeat));
 
 	        obj.report('Post blank')
 	        obj.renderer.drawBlank(obj.timer.calculatePostClose(obj.current_presentation, obj.current_repeat));
@@ -84,19 +88,6 @@ classdef StimulusManager < handle
 			obj.logger.post_time = obj.timer.post_time;
 			obj.logger.n_presentations = obj.timer.n_presentations;
 			obj.logger.n_repeats = obj.timer.n_repeats;
-		end
-
-		function instructRenderer(obj, stim_type, t_close, varargin)
-			switch stim_type
-			case 'grating'
-				obj.renderer.drawDriftingGrating(t_close, varargin{:});
-			case 'image'
-				obj.renderer.drawImage(t_close, varargin{:});
-			case 'movie'
-				obj.renderer.drawMovie(t_close, varargin{:});
-			case 'blank'
-				obj.renderer.drawBlank(t_close, varargin{:});
-			end
 		end
 
 		function increment(obj)
