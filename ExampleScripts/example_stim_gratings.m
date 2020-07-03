@@ -32,7 +32,7 @@ manager.start();
 %% get the timer working tomorrow 
 for r = 1:n_repeats
     for p = 1:n_presentations
-    	manager.present(p); % internal counter
+        manager.present(p); % internal counter
     end
 end
 
