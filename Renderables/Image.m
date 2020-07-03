@@ -1,11 +1,14 @@
 classdef Image < Renderable
     properties
         image
-        texture
         stretch_flag
-
-        draw_rect
     end
+
+    properties (Access = protected)
+        draw_rect
+        texture
+    end
+
 
     methods
         function obj = Image(img, stretch_flag)
@@ -41,7 +44,9 @@ classdef Image < Renderable
                 vbl = Screen('Flip', obj.getWindow(), vbl + 0.5 * obj.getIFI());
             end
         end
-
+    end
+    
+    methods (Access = protected)
         function img = imgChecker(obj, img)
             if ~isa(img, 'double') && ~isa(img, 'uint8')
                 img = double(img);

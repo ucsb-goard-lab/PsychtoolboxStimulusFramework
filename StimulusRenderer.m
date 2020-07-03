@@ -49,6 +49,7 @@ classdef StimulusRenderer < FrameworkObject
                 obj.ifi = Screen('GetFlipInterval', obj.window, 100);
             catch
                 disp('This was likely due to a failure to measure the ifi... run it again, and don''t touch anything')
+                obj.ifi = 1/60;
             end
             topPriorityLevel = MaxPriority(obj.window);
             Priority(topPriorityLevel);
@@ -78,9 +79,7 @@ classdef StimulusRenderer < FrameworkObject
             sca;
             close all;
         end
-    end
-    
-    methods % Drawing toolbox, expand with more as necessary
+
         function drawBlank(obj, t_close)
             % From MG Matlab function "DrawBlank.m"
             
@@ -104,34 +103,7 @@ classdef StimulusRenderer < FrameworkObject
         function drawStimulus(obj, idx, t_close)
             obj.renderable(idx).draw(t_close);
         end
-        
-        function drawImage(obj, t_close, img, stretch_flag)
-            if nargin < 4 || isempty(stretch_flag)
-                stretch_flag = 0;
-            end
-            
-            if ~stretch_flag
-                ratio = size(img, 1) / size(img, 2);
-                short_side = min([obj.rect(3), obj.rect(4)]);
-                mid_point = max([obj.rect(3), obj.rect(4)]) / 2;
-                long_side = round(ratio * short_side);
-                dest_rect = [mid_point - long_side/2, obj.rect(2), mid_point + long_side/2, obj.rect(4)];
-            else
-                dest_rect = obj.rect;
-            end
-            
-            img = obj.imgChecker(img);
-
-            vbl = Screen('Flip', obj.window);
-            while obj.getTime() < t_close
-                [imageTexture] = Screen('MakeTexture', obj.window, img); % probably should add some checks here to make sure it works properly...
-                Screen('DrawTexture', obj.window, imageTexture, [], dest_rect);
-                Screen('DrawingFinished', obj.window);
-                vbl = Screen('Flip', obj.window, vbl + 0.5 * obj.ifi);
-            end
-            Screen('Close', imageTexture);
-        end
-        
+    
         % Getters
         function out = getScreenID(obj)
             out = obj.screen_id;

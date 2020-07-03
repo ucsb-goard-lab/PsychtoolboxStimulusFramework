@@ -12,13 +12,22 @@ classdef StimulusManager < handle
 		logger
 		triggerer
 		timer
+	end
 
+	properties (Access = protected)
 		current_repeat = 1
 		current_presentation = 0 % I know... I don't like it either, but it works
+		renderable_dims
 	end
 
 	methods
 		function obj = StimulusManager(renderable)
+			obj.renderable_dims = size(renderable);
+
+			if ~isvector(renderable)
+				renderable = renderable(:)';
+			end
+
 			% Instantiate all the objects
 			obj.logger = StimDataLogger();
 			obj.timer = StimulusTimer();
@@ -62,11 +71,16 @@ classdef StimulusManager < handle
 			obj.logger.add(input);
 		end
 
-		function present(obj, renderable_idx)
-			if nargin < 2 || isempty(renderable_idx)
+		function present(obj, varargin)
+			switch true
+			case numel(varargin) == 0
 				renderable_idx = 1;
+			case numel(varargin) > 1
+				renderable_idx = sub2ind(obj.renderable_dims, varargin{:}); % Converting to linear indices
+			otherwise
+				renderable_idx = varargin{:};
 			end
-			
+
 	    	obj.increment(); % Increments the manager's counters
 
 	    	obj.report('Pre blank'); % spaces are for alignment
@@ -80,7 +94,7 @@ classdef StimulusManager < handle
 	    end
 	end
 
-	methods (Access = private)
+	methods (Access = protected)
 		function logDefaults(obj)
 			% Pass necessary things into the logger
 			obj.logger.on_time = obj.timer.on_time; 

@@ -44,7 +44,3 @@ classdef Renderable < FrameworkObject
         end
     end
 end
-
-% Create the renderable, empty at first...
-% create a manager with the renderable, which will properly pass the renderable to the renderer
-% the renderer will then inject all the values necessary into the renderable

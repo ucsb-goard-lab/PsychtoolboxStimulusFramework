@@ -5,12 +5,14 @@ classdef DriftingGrating < Renderable
         temp_freq
         contrast
         phase 
-        patch_size
+    end
 
+    properties (Access = protected)
         amplitude
         phase_increment
         rotate_mode
         gratingtex
+        patch_size
     end
 
     methods

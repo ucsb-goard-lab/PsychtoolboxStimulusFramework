@@ -1,11 +1,13 @@
 classdef Movie < Renderable
     properties
         movie
-        waitframes
         n_frames
         framerate
+    end
 
+    properties (Access = protected)
         textures
+        waitframes
     end
 
     methods

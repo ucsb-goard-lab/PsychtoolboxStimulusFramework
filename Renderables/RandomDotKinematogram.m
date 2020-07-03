@@ -6,66 +6,42 @@ classdef RandomDotKinematogram < Renderable
         dot_properties
         display_properties
     end
-
-    methods
-        function obj = RandomDotKinematogram(coherence, direction, size, speed, nDots, lifetime)
-            if nargin < 3 || isempty(size)
-                size = 10;
-            end
-
-            if nargin < 4 || isempty(speed)
-                speed = 80;
-            end
-
-            if nargin < 5 || isempty(nDots)
-                nDots = 200;
-            end
-
-            if nargin < 6 || isempty(lifetime)
-                lifetime = 60;
-            end
-
-            obj.coherence = coherence;
-            obj.direction = direction;
-            obj.dot_properties.nDots = nDots;
-            obj.dot_properties.speed = speed;
-            obj.dot_properties.lifetime = lifetime;
-            obj.dot_properties.size = size;
-
-            obj.dot_properties.center = [0, 0];
-            obj.dot_properties.color = [0, 0, 0];
+% 
+methods
+    function obj = RandomDotKinematogram(coherence, direction, size, speed, nDots, lifetime)
+        if nargin < 3 || isempty(size)
+            size = 10;
         end
 
-        function initialize(obj)
-            % Initialize dot parameters
-            % Randomize the direction of every dot to start
-            random_directions = 0:45:315;
-            obj.dot_properties.random_directions = datasample(random_directions, obj.dot_properties.nDots);
-
-            obj.dot_properties.coherence_direction = obj.direction;
-            obj.dot_properties.coherence = obj.coherence;
-
-            is_already_direction = (obj.dot_properties.random_directions == obj.dot_properties.coherence_direction);
-            coherent_dot_idx = datasample(1:obj.dot_properties.nDots,round(obj.dot_properties.coherence * obj.dot_properties.nDots), 'Replace', false);
-            is_coherent = false(1, obj.dot_properties.nDots);
-            is_coherent(coherent_dot_idx) = true; 
-
-            obj.dot_properties.direction = obj.dot_properties.random_directions;
-            obj.dot_properties.direction(is_coherent & ~is_already_direction) = obj.dot_properties.coherence_direction;
-
-            % Initialize display parameters
-            screen_id = obj.renderer.getScreenID(); 
-            screen_info = Screen('Resolution', screen_id);
-            obj.display_properties.dist = 3; % cm
-            obj.display_properties.width = 14.1; % cm
-            obj.display_properties.resolution = [screen_info.width, screen_info.height];
-            obj.display_properties.frame_rate = Screen('NominalFrameRate', screen_id);
-
-
-            obj.dot_properties.apertureSize = [obj.display_properties.resolution];
+        if nargin < 4 || isempty(speed)
+            speed = 80;
         end
 
-        function draw(obj, t_close)
+        if nargin < 5 || isempty(nDots)
+            nDots = 200;
+        end
+
+        if nargin < 6 || isempty(lifetime)
+            lifetime = 60;
+        end
+
+        obj.coherence = coherence;
+        obj.direction = direction;
+        obj.dot_properties.nDots = nDots;
+        obj.dot_properties.speed = speed;
+        obj.dot_properties.lifetime = lifetime;
+        obj.dot_properties.size = size;
+
+        obj.dot_properties.center = [0, 0];
+        obj.dot_properties.color = [0, 0, 0];
+    end
+
+    function initialize(obj)
+        obj.initializeDisplayProperties();
+        obj.initializeDotProperties();
+    end
+
+    function draw(obj, t_close)
 
             % probably smart to split this up into several subfunctions here
 
@@ -125,6 +101,39 @@ classdef RandomDotKinematogram < Renderable
                 Screen('Flip', obj.getWindow());
             end
             return;
+        end
+    end
+
+    methods (Access = protected)
+        
+        function initializeDisplayProperties(obj, screen_id)
+            if nargin < 2 || isempty(screen_id)
+                screen_id = obj.renderer.getScreenID();
+            end
+            screen_info = Screen('Resolution', screen_id);
+            obj.display_properties.dist = 3; % cm
+            obj.display_properties.width = 14.1; % cm
+            obj.display_properties.resolution = [screen_info.width, screen_info.height];
+            obj.display_properties.frame_rate = Screen('NominalFrameRate', screen_id);
+        end
+
+        function initializeDotProperties(obj, direction_pool)
+            if nargin < 2 || isempty(direction_pool)
+                direction_pool = 0:45:315;
+            end
+            obj.dot_properties.random_directions = datasample(direction_pool, obj.dot_properties.nDots);
+
+            obj.dot_properties.coherence_direction = obj.direction;
+            obj.dot_properties.coherence = obj.coherence;
+
+            is_already_direction = (obj.dot_properties.random_directions == obj.dot_properties.coherence_direction);
+            coherent_dot_idx = datasample(1:obj.dot_properties.nDots,round(obj.dot_properties.coherence * obj.dot_properties.nDots), 'Replace', false);
+            is_coherent = false(1, obj.dot_properties.nDots);
+            is_coherent(coherent_dot_idx) = true; 
+
+            obj.dot_properties.direction = obj.dot_properties.random_directions;
+            obj.dot_properties.direction(is_coherent & ~is_already_direction) = obj.dot_properties.coherence_direction;
+            obj.dot_properties.apertureSize = [obj.display_properties.resolution];
         end
 
         function pix = angle2pix(obj, display, ang)
