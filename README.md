@@ -36,9 +36,12 @@ __post_time__: gray screen following each _on_time_
 
 __presentation__: [_pre_time_ + _on_time_ + _post_time]  
 __repeat__: [_presentation_ * n_presentations]  
+  
 
-### Creating a new stimulus
-To create a new stimulus, create a new subclass under Renderables. Your class must have at least two methods: initialize and draw. Initialize determines all the pre-processing required to generate a PTB texture which is then stored in the class. Draw then draws that texture as necessary (or in some cases, uses other PTB functions like DrawDots to draw).
+### Creating a new stimulus class
+To create a new type of stimulus, create a new subclass under Renderables. Your class must have at least two methods: initialize and draw. Initialize determines all the pre-processing required to generate a PTB texture which is then stored in the class. Draw then draws that texture as necessary (or in some cases, uses other PTB functions like DrawDots to draw).
 
 ### Examples
-Check the __ExampleScripts__ folder for both a general framework for constructing your own stimulus, or for some example stimuli.
+Check the __ExampleScripts__ folder for both a general framework for constructing your own stimulus, or for some example stimuli.  
+
+_Note: It's important to keep the naming of the variables (pre_time, on_time, post_time, n_presentations, and n_repeats). The program currently searches through your workspace for these specific variable names. This will be improved in the future to be more malleable._

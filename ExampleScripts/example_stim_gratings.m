@@ -4,13 +4,12 @@ clear;
 close all;
 sca;
 
+orientation_list = [0:30:330]; % Orientation pool
+n_repeats = 10; % 10 repeats of each group of presentations
+
 pre_time = 2; % seconds preceding stimulus on
 on_time = 2; % seconds stimulus presentation
 post_time = 2; % seconds following stimulus on
-
-n_repeats = 10; % 10 repeats of each group of presentations
-
-orientation_list = [0:30:330]; % Orientation pool
 
 n_presentations = length(orientation_list); % 8 different presentations (each time is a different orientation in this case)
 
@@ -29,7 +28,7 @@ manager.setTrigger(DAQ_flag);
 
 manager.start();
 
-%% get the timer working tomorrow 
+% Present the stimulus
 for r = 1:n_repeats
     for p = 1:n_presentations
         manager.present(p); % internal counter
