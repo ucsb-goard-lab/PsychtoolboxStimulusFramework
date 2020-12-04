@@ -1,4 +1,4 @@
-function reset()
+function full_reset()
 	clear;
 	clc;
 	close all;
