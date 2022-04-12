@@ -2,13 +2,14 @@ classdef RandomDotKinematogram < Renderable
     properties
         coherence
         direction
+	drawmask
 
         dot_properties
         display_properties
     end
 % 
 methods
-    function obj = RandomDotKinematogram(coherence, direction, size, speed, nDots, lifetime)
+    function obj = RandomDotKinematogram(coherence, direction, size, speed, nDots, lifetime, drawmask)
         if nargin < 3 || isempty(size)
             size = 10;
         end
@@ -22,9 +23,14 @@ methods
         end
 
         if nargin < 6 || isempty(lifetime)
-            lifetime = 60;
+            lifetime = 45;
         end
 
+	if nargin < 7 || isempty(drawmask)
+		drawmask = false;
+	end
+	
+	obj.drawmask = drawmask;
         obj.coherence = coherence;
         obj.direction = direction;
         obj.dot_properties.nDots = nDots;
@@ -71,12 +77,15 @@ methods
                 pixpos.y = obj.dot_properties.y+ obj.display_properties.resolution(2)/2;
                 
                 %Use the equation of an ellipse to determine which dots fall inside.
-                %goodDots = (obj.dot_properties.x-obj.dot_properties.center(1)).^2/(obj.dot_properties.apertureSize(1)/2)^2 + ...  % circular aperture
-                %    (obj.dot_properties.y-obj.dot_properties.center(2)).^2/(obj.dot_properties.apertureSize(2)/2)^2 < 1;
-                
+		if obj.drawmask
+                goodDots = (obj.dot_properties.x-obj.dot_properties.center(1)).^2/(obj.dot_properties.apertureSize(1)/2)^2 + ...  
+                    (obj.dot_properties.y-obj.dot_properties.center(2)).^2/(obj.dot_properties.apertureSize(2)/2)^2 < 1;
+		else
+			goodDots = true(1, length(pixpos.x));
+		end
                 
                 % if you're using an ellipse, add pixpos.x(goodDots) and for y too
-                Screen('DrawDots', obj.getWindow(), [pixpos.x; pixpos.y],  obj.dot_properties.size, obj.dot_properties.color, [0, 0], 3);
+                Screen('DrawDots', obj.getWindow(), [pixpos.x(goodDots); pixpos.y(goodDots)],  obj.dot_properties.size, obj.dot_properties.color, [0, 0], 3);
                 %update the dot position
                 obj.dot_properties.x = obj.dot_properties.x + dx;
                 obj.dot_properties.y = obj.dot_properties.y + dy;
@@ -133,7 +142,11 @@ methods
 
             obj.dot_properties.direction = obj.dot_properties.random_directions;
             obj.dot_properties.direction(is_coherent & ~is_already_direction) = obj.dot_properties.coherence_direction;
+	    if obj.drawmask
+		    obj.dot_properties.apertureSize = [500, 500];
+	    else
             obj.dot_properties.apertureSize = [obj.display_properties.resolution];
+	    end
         end
 
         function pix = angle2pix(obj, display, ang)

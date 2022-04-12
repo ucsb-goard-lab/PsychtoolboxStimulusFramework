@@ -3,11 +3,11 @@
     close all;
     sca;
 
-    pre_time = 2; % seconds preceding stimulus on
-    on_time = 2; % seconds stimulus presentation
-    post_time = 2; % seconds following stimulus on
+    pre_time = 0.5; % seconds preceding stimulus on
+    on_time = 1; % seconds stimulus presentation
+    post_time = 0.5; % seconds following stimulus on
 
-    n_repeats = 10; % 10 repeats of each group of presentations
+    n_repeats = 1; % 10 repeats of each group of presentations
 
     orientation_list = [0:45:315]; % Orientation pool
 
@@ -15,12 +15,12 @@
 
     DAQ_flag = 0; % For triggering the microscope
     for ii = 1:numel(orientation_list)
-    stimulus(ii) = RandomDotKinematogram(1, orientation_list(ii));
+    stimulus(ii) = RandomDotKinematogram(0.8, orientation_list(ii));
     end
 
     % Instantiate objects
     manager = StimulusManager(stimulus);
-    manager.setScreenID(1);
+    manager.setScreenID(2);
 
     manager.setTrigger(DAQ_flag); 
     manager.initialize();
