@@ -5,6 +5,9 @@ classdef Microscope < handle
 		is_direct_record
 		save_directory
 		filename
+
+		tif_writer
+		tags
 	end
 
 	methods
@@ -36,7 +39,28 @@ classdef Microscope < handle
 		function setMaxFrames(obj, n_frames)
 			set(obj.microscope, 'TriggerRepeat', n_frames - 1); % -1 because it's additional triggers on top of the first one
 		end
-		
+
+		function setSaveParameters(obj, save_dir, filename)
+			obj.setSaveDirectory(save_dir);
+			obj.setFilename(filename);
+			% initialize the tif library
+			obj.tif_writer = Tiff(sprintf('%s/%s.tif', obj.save_directory, obj.filename), 'w8');
+			% set the tagstruct
+            obj.generateTags();
+			fprintf("Files will be saved as '%s%s%s.tif'.\n", obj.save_directory, filesep, obj.filename);
+		end	
+
+		function generateTags(obj)
+			roi_dims = obj.microscope.ROIPosition;
+			obj.tags.ImageLength = roi_dims(4); 
+			obj.tags.ImageWidth = roi_dims(3);
+			obj.tags.Photometric = Tiff.Photometric.MinIsBlack;
+			obj.tags.BitsPerSample = 16;
+			obj.tags.SamplesPerPixel = 1;
+			obj.tags.PlanarConfiguration = Tiff.PlanarConfiguration.Chunky; 
+			obj.tags.Software = 'MATLAB'; 
+		end
+
 		function setSaveDirectory(obj, save_dir)
 			if nargin < 2 || isempty(save_dir)
 				save_dir = uigetdir();
@@ -48,7 +72,6 @@ classdef Microscope < handle
 				return
 			end
 			obj.save_directory = s.path;
-			fprintf("Files will be saved in '%s'.\n", obj.save_directory);
 		end
 
 		function setFilename(obj, filename)
@@ -107,8 +130,8 @@ classdef Microscope < handle
 			fprintf('ROI reset.\n');
 		end
 
-		function start(obj)
-			stoppreview(obj.microscope); % cancel preview
+		function start(obj)                
+ 			stoppreview(obj.microscope); % cancel preview
 			triggerconfig(obj.microscope, 'hardware', '', 'ExternExposureStart');
 			start(obj.microscope);	
 			fprintf('Waiting for trigger...\n')
@@ -116,32 +139,48 @@ classdef Microscope < handle
 				% wait until we have some frames before starting to
 			end
 			idx = 1;
-			while obj.microscope.FramesAvailable > 0
-			obj.writeBuffer(idx);
-			idx = idx + 1;
-			end
-			stop(obj.microscope)
-		end 
-
-		function writeBuffer(obj, idx)
+			while obj.microscope.FramesAvailable > 0 || strcmp(obj.microscope.Running, 'on')
 				if mod(idx, 10) == 0
 					fprintf('Writing frame %d\n', idx)
 					drawnow();
 				end
-				out = getdata(obj.microscope, 1);
-				imwrite(out, sprintf("%s/%s_%06d.tif", obj.save_directory, obj.filename, idx)); % looks like it'll wait
+				obj.write(); % will need error handlinng 
+				idx = idx + 1;
+			end
+		end 
+
+		function write(obj)
+			try
+			out = getdata(obj.microscope, 1); % currently only a single image taken, but can we try to take chunks?
+			catch ME
+				if strcmp(ME.identifier, 'imag:getdata:timeout')
+					return
+				else
+					rethrow(ME); % rethrow if it's an actual error
+				end
+			end
+			obj.tif_writer.setTag(obj.tags);
+			obj.tif_writer.write(out);
+			obj.tif_writer.writeDirectory();
 		end
-		function out = finish(obj)
-			% out = squeeze(getdata(obj.microscope, obj.microscope.FramesAvailable)); % squeeze out the color dim b/c grayscale
+
+		function stop(obj)
 			stop(obj.microscope);
+		end
+
+		function finish(obj)
+			obj.stop();
 			delete(obj.microscope);
+			obj.tif_writer.close();
 		end
 
 		function abort(obj)
 			stop(obj.microscope)
+			obj.tif_writer.close();
 		end
 		function delete(obj)
 			delete(obj.microscope); % ensure that the microscope has been deleted so it doen't jam up matlab
+			obj.tif_writer.close();
 		end
 	end
 end
