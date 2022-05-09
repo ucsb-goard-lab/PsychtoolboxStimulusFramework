@@ -19,10 +19,6 @@ classdef MicroscopeTriggerer < FrameworkObject
     
     methods
         function obj = MicroscopeTriggerer(enabled)
-            if nargin < 1 || isempty(enabled)
-                enabled = 0;
-            end
-
             obj.enabled = enabled;
         end
         

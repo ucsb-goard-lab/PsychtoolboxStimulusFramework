@@ -9,6 +9,9 @@ classdef WidefieldTriggerer < MicroscopeTriggerer
 
 	methods
 		function obj = WidefieldTriggerer(enabled, illumination)
+			if nargin < 1 || isempty(enabled)
+				enabled = false;
+			end
 			if nargin < 2 || isempty(illumination)
 				illumination = 'both';
 			end

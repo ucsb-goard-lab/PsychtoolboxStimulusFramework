@@ -4,6 +4,9 @@ classdef TwoPhotonTriggerer < MicroscopeTriggerer
 
 	methods
 		function obj = TwoPhotonTriggerer(enabled)
+			if nargin < 1 || isempty(enabled)
+				enabled = false;
+			end
 			obj = obj@MicroscopeTriggerer(enabled)
 			obj.microscope = '2P';
 		end
