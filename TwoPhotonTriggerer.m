@@ -20,21 +20,21 @@ classdef TwoPhotonTriggerer < MicroscopeTriggerer
 				pin = 'ao0';
 			end
 			if obj.enabled
-				obj.s = daq.createSession('ni');
-				obj.s.addAnalogOutputChannel(device, pin, 'Voltage');
-				obj.s.outputSingleScan(0);
+				obj.s = daq('ni');
+				obj.s.addoutput(device, pin, 'Voltage');
+				obj.s.write(0);
 			end
 		end
 
 		function start(obj)
 			if obj.enabled
-				obj.s.outputSingleScan(5);
+				obj.s.write(5);
 			end
 		end
 
 		function finish(obj)
 			if obj.enabled
-				obj.s.outputSingleScan(0);
+				obj.s.write(0);
 			end
 		end	
 	end
