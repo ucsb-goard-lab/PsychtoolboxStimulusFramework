@@ -23,13 +23,12 @@ classdef Microscope < handle
             % Set some defaults
             obj.microscope.FramesPerTrigger = 1;
             obj.source = getselectedsource(obj.microscope); % this gets the hardware info from the microscope so we can change stuff
-            % obj.microscope.LoggingMode = 'disk';
             set(obj.microscope, 'TriggerRepeat', Inf); % -1 because it's additional triggers on top of the first one
             
             %% initialize parallel pool if not exist
             p = gcp('nocreate');
             if isempty(p)
-                p = parpool(3);
+                p = parpool(4); % important that the processor has 8 logical (usualy 4 physical) cores to work with, or else we won't be able to write fast enough
             end
             
         end
@@ -46,13 +45,6 @@ classdef Microscope < handle
         function setSaveParameters(obj, save_dir, filename)
             obj.setSaveDirectory(save_dir);
             obj.setFilename(filename);
-            % initialize the tif library
-            
-            % obj.saver = VideoWriter(sprintf('%s%s%s.mj2', obj.save_directory, filesep, obj.filename), 'Motion JPEG 2000');
-            % obj.microscope.DiskLogger = obj.saver;
-            % obj.saver = Tiff(sprintf('%s/%s.tif', obj.save_directory, obj.filename), 'w8');
-            % % 	% set the tagstruct
-            % obj.generateTags();
             fprintf("Files will be saved as '%s%s%s.tif'.\n", obj.save_directory, filesep, obj.filename);
         end
         
@@ -144,58 +136,6 @@ classdef Microscope < handle
             start(obj.microscope)
         end
         
-        % function start(obj)
-        % 	stoppreview(obj.microscope); % cancel preview
-        % 	triggerconfig(obj.microscope, 'hardware', '', 'ExternExposureStart');
-        % 	start(obj.microscope);
-        % 	fprintf('Waiting for trigger...\n')
-        % 	% while obj.microscope.FramesAcquired ~= obj.microscope.DiskLoggerFrameCount
-        % 	% 	pause(0.1)
-        % 	% end
-        % 	while obj.microscope.FramesAvailable < 1
-        % 		% wait until we have some frames before starting to
-        % 	end
-        %
-        % % 	written = 0;
-        % % 	prev = 0;
-        % % 	no_change = 0;
-        % % 	while written ~= obj.microscope.FramesAcquired% keep running until done?
-        % % 		if obj.microscope.FramesAvailable > 100
-        % % 			fprintf('writing 100 frames\n')
-        % % 			obj.write();
-        % % 			written = written + 100;
-        %     % end
-        %     % disp(written)
-        % % 		% exit
-        % % 		if obj.microscope.FramesAcquired - prev == 0
-        % % 			% no change, add ct
-        % % 			no_change = no_change + 1;
-        %     %     disp(no_change)
-        %     % end
-        % % 		if no_change > 10
-        % % 			break
-        % % 		end
-        % % 	end
-        %     %
-        % % 	keyboard
-        % no_frame_count = 0;
-        % 	while true %strcmp(obj.microscope.Running, 'on') || obj.microscope.FramesAvailable > 0
-        % 		if obj.microscope.FramesAvailable == 0
-        % 			no_frame_count = no_frame_count + 1;
-        % 		else
-        % 			no_frame_count = 0; % reset if a frame comes in
-        % 		end
-        % 		if no_frame_count > 50
-        % 			break
-        % 		end
-        % 		obj.write(); % will need error handlinng
-        % 		pause(0.01); % don't eat up all the resources
-        % end
-        % fprintf('Done writing frames\n');
-        % end
-        
-        
-        
         function write(obj)
             % calculate num_frames
             n_frames = min(obj.microscope.FramesAvailable, 1); % single frame writing seems to be the way to go...
@@ -259,7 +199,7 @@ classdef Microscope < handle
             % writeTIFF is called by saveImageData.
             
             for ii = 1:n
-                fullFileName = [fileName sprintf('_%d.tif', relativeFrame + ii - 1)];
+                fullFileName = [fileName sprintf('_%06d.tif', relativeFrame + ii - 1)];
                 imwrite(data(:,:,:,ii), fullFileName, 'tiff');
             end
             
