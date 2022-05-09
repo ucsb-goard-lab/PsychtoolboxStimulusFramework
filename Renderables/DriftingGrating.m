@@ -59,10 +59,11 @@ classdef DriftingGrating < Renderable
 
         function draw(obj, t_close)
             %% From MG function "DrawDriftingGrating.m"
+	    phase = obj.phase;
             vbl = Screen('Flip', obj.getWindow());
             while obj.renderer.getTime() < t_close
                 % Increment phase by 1 degree:
-                phase = obj.phase + obj.phase_increment;
+                phase = phase + obj.phase_increment;
                 
                 % Draw the grating:
                 Screen('DrawTexture',obj.getWindow(), obj.gratingtex, obj.getRect(), obj.getRect(), obj.ori, [], [], [], [], obj.rotate_mode, [phase, obj.spat_freq, obj.amplitude, 0]);
