@@ -13,7 +13,7 @@ post_time = 2; % seconds following stimulus on
 
 n_presentations = length(orientation_list); % 8 different presentations (each time is a different orientation in this case)
 
-DAQ_flag = 0; % For triggering the microscope
+DAQ_flag = 1; % For triggering the microscope
 
 for ori = 1:numel(orientation_list)
     stimulus(ori) = DriftingGrating(orientation_list(ori));
@@ -21,7 +21,7 @@ end
 
 % Instantiate objects
 manager = StimulusManager(stimulus);
-manager.setScreenID(1);
+manager.setScreenID(0);
 
 manager.initialize();
 manager.setTrigger(DAQ_flag); 

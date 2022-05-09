@@ -17,7 +17,7 @@ classdef TwoPhotonTriggerer < MicroscopeTriggerer
 			end
 
 			if nargin < 3 || isempty(pin)
-				pin = 'ao0'
+				pin = 'ao0';
 			end
 			if obj.enabled
 				obj.s = daq.createSession('ni');
