@@ -33,6 +33,7 @@ classdef MicroscopeTriggerer < FrameworkObject
 
         function setTrigger(obj, enable)
             obj.enabled = enable;
+	    obj.initialize(); % reinitialize because it probably was skipped before...
         end
     end
 end

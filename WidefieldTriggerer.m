@@ -22,6 +22,7 @@ classdef WidefieldTriggerer < MicroscopeTriggerer
 
 		function initialize(obj, stimulus_duration)
 			% probably better to pass it in and prepare, right?
+			if obj.enabled
 			obj.s = daq('ni');
 
 			blue_trigger = obj.s.addoutput('Dev1', 'ao0', 'Voltage');
@@ -30,6 +31,7 @@ classdef WidefieldTriggerer < MicroscopeTriggerer
 			trigger_waveforms = obj.generateLEDTriggers();
 			microscope_waveform = obj.generateMicroscopeTrigger();
 			obj.s.preload(repmat([trigger_waveforms', microscope_waveform'], stimulus_duration, 1)) % number of seconds
+			end
 		end
 
 		function start(obj)
