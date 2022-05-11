@@ -34,7 +34,7 @@ classdef Microscope < handle
         end
         
         function setExposureTime(obj, exposure_time)
-            obj.source.E2ExposureTime = exposure_time * 1000; % the reduction in frame time is necessary or else we won't hit the target framerate with teh trigger (skip frames)
+            obj.source.E2ExposureTime = 0.9 * ( exposure_time * 1000); % the reduction in frame time is necessary or else we won't hit the target framerate with teh trigger (skip frames)
         end
         
         function preview(obj)
@@ -66,8 +66,14 @@ classdef Microscope < handle
             % in case it's a partial path, get the full path heer
             s = what(save_dir);
             if isempty(s)
-                error("Cannot find the specified directory.")
-                return
+                create_dir = logical(input("Cannot find the specified directory, would you like to create it? 1/0: \n"));
+                if create_dir
+                    mkdir(save_dir)
+                    s = what(save_dir);
+                else
+                    error("Aborted due to no save path.")
+                    return
+                end
             end
             obj.save_directory = s.path;
         end
