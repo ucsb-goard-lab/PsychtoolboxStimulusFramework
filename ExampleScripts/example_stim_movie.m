@@ -15,7 +15,7 @@ DAQ_flag = 0;
 
 
 % Load movie
-movie = importdata('C:\Users\sit\Dropbox\StimulusPresentation\NaturalScenes\MovieDatabase\TouchofEvil\TouchofEvil.mat');
+movie = importdata('C:\Users\Goard Lab\Dropbox\StimulusPresentation\NaturalScenes\MovieDatabase\TouchofEvil\TouchofEvil.mat');
 
 stimulus = Movie(movie);
 
