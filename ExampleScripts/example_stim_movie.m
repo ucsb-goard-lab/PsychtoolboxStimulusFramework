@@ -5,8 +5,8 @@ close all;
 sca;
 
 pre_time = 2;
-on_time = 15; 
-post_time = 2;
+on_time = 30; 
+post_time = 3;
 
 n_repeats = 30;
 n_presentations = 1;
@@ -32,3 +32,5 @@ for r = 1:n_repeats
 		manager.present()
 	end
 end
+
+manager.finish();
