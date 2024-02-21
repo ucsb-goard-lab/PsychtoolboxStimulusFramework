@@ -2,13 +2,13 @@ function [  ] = retinotopicMapStim(  )
 % Beta retinotopic mapping code
 %   Written KS 180123
 
-clear
-close all
+clear;
+close all;
 
 %% Preparing movie database, change this path to point to the directory containing '4direction_stim.mat'
 
 % Load the movie
-load('C:\Users\Goard Lab\Dropbox\StimulusPresentation\4directions_stim.mat');
+load('4directions_stim.mat');
 
 % Concatenating into one big movie
 full_stim = uint8(cat(4,forward_stim,backward_stim,upward_stim,downward_stim));

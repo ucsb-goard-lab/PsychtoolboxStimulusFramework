@@ -13,7 +13,7 @@ DAQ_flag = 0;
 
 
 % Get your images, replace this as necessary
-image_matrix = importdata('C:\Users\sit\Dropbox\CodeInBeta_Kevin\Amani Project\TextureStimuli\image_matrix.mat'); % load the image matrix
+image_matrix = importdata('natural_scenes.mat'); % load the image matrix
 n_presentations = size(image_matrix, 3);
 
 for n = 1:n_presentations
