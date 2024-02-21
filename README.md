@@ -45,3 +45,8 @@ To create a new type of stimulus, create a new subclass under Renderables. Your 
 Check the __ExampleScripts__ folder for both a general framework for constructing your own stimulus, or for some example stimuli.  
 
 _Note: It's important to keep the naming of the variables (pre_time, on_time, post_time, n_presentations, and n_repeats). The program currently searches through your workspace for these specific variable names. This will be improved in the future to be more malleable._
+
+
+## Install
+
+Follow installation instructions for Psychtoolbox-3 [here](http://psychtoolbox.org/download#Windows).
