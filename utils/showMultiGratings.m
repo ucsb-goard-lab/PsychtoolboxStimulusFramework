@@ -14,7 +14,7 @@ rng(10, "twister");
 
 shuffle = 1;
 orientation_list = [0:30:330]; % Orientation pool
-spat_freq_list = [0.01, 0.02, 0.04, 0.08, 0.16, 0.32.];
+spat_freq_list = [0.01, 0.02, 0.04, 0.08, 0.16, 0.32];
 temp_freq_list = [0.5, 1, 2, 4, 8, 16];
 
 

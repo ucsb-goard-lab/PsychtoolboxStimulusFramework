@@ -22,7 +22,7 @@ end
 
 % Instantiate objects
 manager = StimulusManager(stimulus);
-manager.setScreenID(1);
+manager.setScreenID(3);
 
 manager.initialize();
 manager.setTrigger(DAQ_flag);

@@ -12,18 +12,20 @@ opt_list = {
 answer = listdlg('PromptString', 'Select the stimulus to present.', ...
     'SelectionMode', 'single', 'ListString', opt_list);
 
-if opt_list(answer) == 'Natural Movie'
-    showMovie()
-elseif opt_list(answer) == 'Multi Gratings'
-    showMultiGratings()
-elseif opt_list(answer) == 'Random Dot'
-    showRandomDot()
-elseif opt_list(answer) == 'Natural Images'
-    showNatImgs()
-elseif opt_list(answer) == 'Retinotopic Mapping'
-    showRetinotopicMapping()
-elseif opt_list(answer) == 'Simple Gratings'
-    showSimpleGratings()
+chk = string(opt_list(answer));
+
+if chk == 'Natural Movie'
+    showMovie
+elseif chk == 'Multi Gratings'
+    showMultiGratings
+elseif chk == 'Random Dot'
+    showRandomDot
+elseif chk == 'Natural Images'
+    showNatImgs
+elseif chk == 'Retinotopic Mapping'
+    showRetinotopicMapping
+elseif chk == 'Simple Gratings'
+    showSimpleGratings
 end
 
 
