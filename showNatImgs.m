@@ -1,6 +1,5 @@
 % This stimulus would be akin to some kind of image database stimulus
 
-
 clear;
 close all;
 sca;

@@ -1,11 +1,10 @@
-function [  ] = retinotopicMapStim(  )
 % Beta retinotopic mapping code
 %   Written KS 180123
 
 clear;
 close all;
 
-%% Preparing movie database, change this path to point to the directory containing '4direction_stim.mat'
+% Preparing movie database, change this path to point to the directory containing '4direction_stim.mat'
 
 % Load the movie
 load('4directions_stim.mat');
@@ -18,7 +17,7 @@ screenid = 2;
 mov_length = size(forward_stim,3); % each presentation of the stimulus will be this length
 
 
-%% Stimulus parameters (change these to your liking)
+% Stimulus parameters (change these to your liking)
 repeats = 10; %repeats of total movie list(default = 30)
 offTime = 2; %gray screen in between each direction
 refreshRate = Screen('NominalFrameRate', screenid);
@@ -35,7 +34,7 @@ repDur = stim_dur*4; % four directions
 totalDur = repDur*repeats;
 disp(['Stimulus duration: ' num2str(totalDur) ' sec'])
 
-%% Psych toolbox set up
+% Psych toolbox set up
 Screen('Preference','SkipSyncTests',1);
 
 Screen('Preference','VisualDebugLevel',0);
@@ -54,7 +53,7 @@ vbl = Screen('Flip', win);
 priorityLevel = MaxPriority(win);
 Priority(priorityLevel);
 
-%% Triggering the camera, change this as necessary
+% Triggering the camera, change this as necessary
     
     wf = WidefieldTriggerer(DAQ_flag);
     wf.initialize(totalDur);
@@ -62,7 +61,7 @@ Priority(priorityLevel);
 
 tstart = GetSecs;
 
-%% Display stimulus
+% Display stimulus
 % Displays the pre-recorded movies, one in each direction
 for rep = 1:repeats
     for drxn = 1:4
@@ -89,12 +88,12 @@ for rep = 1:repeats
 end
 tfinal = (GetSecs-tstart);
 
-%% Clean up
+% Clean up
 wf.finish();
 Screen('CloseAll')
 Priority(0);
 
-%% Save stimulus data file
+% Save stimulus data file
 
 Stimdata.blank_on = blank_on;
 Stimdata.blank_end = blank_end;

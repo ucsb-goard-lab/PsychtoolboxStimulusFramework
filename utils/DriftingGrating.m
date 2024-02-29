@@ -59,7 +59,7 @@ classdef DriftingGrating < Renderable
 
         function draw(obj, t_close)
             %% From MG function "DrawDriftingGrating.m"
-	    phase = obj.phase;
+	        phase = obj.phase;
             vbl = Screen('Flip', obj.getWindow());
             while obj.renderer.getTime() < t_close
                 % Increment phase by 1 degree:

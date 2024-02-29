@@ -1,4 +1,3 @@
-function [] = showMultiGratings()
 %{
 Passive drifting gratings.
 Presents at 12 orientations, 6 spatial frequencies, and 6 temporal
@@ -13,18 +12,26 @@ sca;
 rng(10, "twister");
 
 shuffle = 1;
-orientation_list = [0:30:330]; % Orientation pool
+smlMonitor = 1;
+
+orientation_list = 0:30:330; % Orientation pool
 spat_freq_list = [0.01, 0.02, 0.04, 0.08, 0.16, 0.32];
 temp_freq_list = [0.5, 1, 2, 4, 8, 16];
 
+if smlMonitor==1
+    % convert cycles/pixel to cycles/deg
+    % 77.9 pixels / 1 cm (for diagonal resolution of small monitors)
+    % 1 cm / 4 deg (for monitor places 14.3 cm away from viewer)
+    spat_freq_list = spat_freq_list ./ (77.9 / 4);
+end
 
 n_repeats = 10; % 10 repeats of each group of presentations
 
-pre_time = 0.5; % seconds preceding stimulus on
-on_time = 2; % seconds stimulus presentation
-post_time = 0.5; % seconds following stimulus on
+pre_time = 1; % seconds preceding stimulus on
+on_time = 3; % seconds stimulus presentation
+post_time = 1; % seconds following stimulus on
 
-n_presentations = length(orientation_list); % 8 different presentations (each time is a different orientation in this case)
+n_presentations = length(orientation_list) * length(spat_freq_list) * length(temp_freq_list);
 
 DAQ_flag = 0; % For triggering the microscope
 
@@ -47,7 +54,7 @@ manager = StimulusManager(stimulus);
 manager.setScreenID(3);
 
 manager.initialize();
-manager.setTrigger(DAQ_flag); 
+manager.setTrigger(DAQ_flag);
 
 manager.start();
 
@@ -59,5 +66,3 @@ for r = 1:n_repeats
 end
 
 manager.finish();
-
-end
