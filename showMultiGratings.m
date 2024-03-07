@@ -14,9 +14,9 @@ rng(10, "twister");
 shuffle = 1;
 smlMonitor = 1;
 
-orientation_list = 0:30:330; % Orientation pool
-spat_freq_list = [0.01, 0.02, 0.04, 0.08, 0.16, 0.32];
-temp_freq_list = [0.5, 1, 2, 4, 8, 16];
+orientation_list = 0:45:315; % Orientation pool
+spat_freq_list = [0.02, 0.08, 0.32];
+temp_freq_list = [2, 4, 8];
 
 if smlMonitor==1
     % convert cycles/pixel to cycles/deg
@@ -25,15 +25,15 @@ if smlMonitor==1
     spat_freq_list = spat_freq_list ./ (77.9 / 4);
 end
 
-n_repeats = 10; % 10 repeats of each group of presentations
+n_repeats = 2; % 10 repeats of each group of presentations
 
-pre_time = 1; % seconds preceding stimulus on
+pre_time = 0.5; % seconds preceding stimulus on
 on_time = 3; % seconds stimulus presentation
-post_time = 1; % seconds following stimulus on
+post_time = 0.5; % seconds following stimulus on
 
 n_presentations = length(orientation_list) * length(spat_freq_list) * length(temp_freq_list);
 
-DAQ_flag = 0; % For triggering the microscope
+DAQ_flag = 1; % For triggering the microscope
 
 count_ = 0;
 for ori = 1:numel(orientation_list)
@@ -51,7 +51,7 @@ end
 
 % Instantiate objects
 manager = StimulusManager(stimulus);
-manager.setScreenID(3);
+manager.setScreenID(2);
 
 manager.initialize();
 manager.setTrigger(DAQ_flag);
