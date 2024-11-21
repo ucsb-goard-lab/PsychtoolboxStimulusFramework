@@ -4,14 +4,14 @@ clear;
 close all;
 sca;
 
-pre_time = 0.5;
+pre_time = 1;
 on_time = 30;
-post_time = 0.5;
+post_time = 2;
 
-n_repeats = 30;
+n_repeats = 15;
 n_presentations = 1;
 
-DAQ_flag = 0;
+DAQ_flag = 1;
 
 % Load movie
 movie = importdata('TouchofEvil.mat');
@@ -19,7 +19,7 @@ movie = importdata('TouchofEvil.mat');
 stimulus = Movie(movie);
 
 manager = StimulusManager(stimulus);
-manager.setScreenID(3);
+manager.setScreenID(1);
 
 manager.initialize();
 manager.setTrigger(DAQ_flag);

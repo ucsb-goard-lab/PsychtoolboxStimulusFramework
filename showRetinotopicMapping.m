@@ -16,7 +16,6 @@ full_stim = uint8(cat(4,forward_stim,backward_stim,upward_stim,downward_stim));
 screenid = 2;
 mov_length = size(forward_stim,3); % each presentation of the stimulus will be this length
 
-
 % Stimulus parameters (change these to your liking)
 repeats = 10; %repeats of total movie list(default = 30)
 offTime = 2; %gray screen in between each direction

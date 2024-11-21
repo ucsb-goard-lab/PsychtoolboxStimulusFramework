@@ -16,7 +16,7 @@ smlMonitor = 1;
 
 orientation_list = 0:45:315; % Orientation pool
 spat_freq_list = [0.02, 0.08, 0.32];
-temp_freq_list = [2, 4, 8];
+temp_freq_list = [2, 8];
 
 if smlMonitor==1
     % convert cycles/pixel to cycles/deg
@@ -25,11 +25,11 @@ if smlMonitor==1
     spat_freq_list = spat_freq_list ./ (77.9 / 4);
 end
 
-n_repeats = 2; % 10 repeats of each group of presentations
+n_repeats = 8; % 10 repeats of each group of presentations
 
-pre_time = 0.5; % seconds preceding stimulus on
-on_time = 3; % seconds stimulus presentation
-post_time = 0.5; % seconds following stimulus on
+pre_time = 0; % seconds preceding stimulus on
+on_time = 2; % seconds stimulus presentation
+post_time = 4; % seconds following stimulus on
 
 n_presentations = length(orientation_list) * length(spat_freq_list) * length(temp_freq_list);
 
@@ -51,7 +51,7 @@ end
 
 % Instantiate objects
 manager = StimulusManager(stimulus);
-manager.setScreenID(2);
+manager.setScreenID(1);
 
 manager.initialize();
 manager.setTrigger(DAQ_flag);
@@ -66,3 +66,7 @@ for r = 1:n_repeats
 end
 
 manager.finish();
+
+% save stimulus
+cd('C:\Users\Goard Lab\Desktop')
+uisave('stimulus','241120_DMM_DMM033_multiGratings_test_1')

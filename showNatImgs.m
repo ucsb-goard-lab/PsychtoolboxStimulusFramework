@@ -5,9 +5,9 @@ close all;
 sca;
 
 pre_time = 2;
-on_time = 1;
+on_time = 2;
 post_time = 2;
-n_repeats = 5;
+n_repeats = 1;
 DAQ_flag = 0;
 
 
@@ -16,12 +16,12 @@ image_matrix = importdata('natural_scenes.mat'); % load the image matrix
 n_presentations = size(image_matrix, 3);
 
 for n = 1:n_presentations
-    stimulus(n) = Image(image_matrix(:, :, n));
+    stimulus(n) = Image(image_matrix(:, :, n), 2);
 end
 
 % Instantiate objects
 manager = StimulusManager(stimulus);
-manager.setScreenID(3);
+manager.setScreenID(1);
 
 manager.initialize();
 manager.setTrigger(DAQ_flag);

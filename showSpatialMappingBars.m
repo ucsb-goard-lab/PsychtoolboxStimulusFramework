@@ -4,17 +4,17 @@ function [Stimdata] = showSpatialMappingBars()
 
 % params
 repeats = 25;                                           % Number of repeats
-num_x = 5;                                              % number of x locations
-num_y = 5;                                              % number of y locations
-rand_flag = 0;                                          % whether to randomize presentation
+num_x = 8;                                              % number of x locations
+num_y = 8;                                              % number of y locations
+rand_flag = 1;                                          % whether to randomize presentation
 
 % visual params
-spatFreq = 0.004;                                       % Spatial Freq
+spatFreq = 0.02;                                       % Spatial Freq
 tempFreq = 2;                                           % Temporal freq
 contrast = 1;                                           % Contrast [0 1]
 phase = 0;                                              % Phase list
 patchSize = 1000;                                       % Patchsize (pixels)
-offTime = 2;                                            % Offtime (sec)
+offTime = 0.5;                                            % Offtime (sec)
 onTime = 2;                                             % Ontime (sec)
 background = 0;                                         % Bkgrnd brightness [0 1]
 
@@ -38,7 +38,7 @@ Stimdata.num_y = num_y;
 Stimdata.numRep = repeats;
 
 % Choose screen for display:
-screenid = 3;
+screenid = 2;
 
 % Skip sync test
 Screen('Preference','SkipSyncTests',1);
